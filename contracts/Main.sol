@@ -37,6 +37,17 @@ contract Main {
         _;
     }
 
+    modifier onlySessionContract() {
+    bool isSession = false;
+    for (uint i = 0; i < sessions.length; i++) {
+        if (address(sessions[i]) == msg.sender) {
+            isSession = true;
+            break;
+        }
+    }
+    require(isSession, "Only Session contract can call this function");
+    _;
+}
     function createNewSession(
         string memory _productName,
         string memory _productDescription,
@@ -79,11 +90,11 @@ contract Main {
     }
 
 
-    function updateDeviation(uint256 _deviation, address _participant) external {
+    function updateDeviation(uint256 _deviation, address _participant) external onlySessionContract {
         participants[_participant].deviation = _deviation;
     }
 
-    function updateSessionJoinedCount(address _account) external {
+    function updateSessionJoinedCount(address _account) external onlySessionContract {
         participants[_account].sessionJoinedCount += 1; 
     }
 
